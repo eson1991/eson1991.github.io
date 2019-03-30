@@ -1,215 +1,238 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+﻿<!doctype html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>罗应生</title>
-<link type="text/css" rel="stylesheet" href="renxi/default.css">
-<script type="text/javascript" src="renxi/jquery.min.js"></script>
-<script type="text/javascript" src="renxi/jscex.min.js"></script>
-<script type="text/javascript" src="renxi/jscex-parser.js"></script>
-<script type="text/javascript" src="renxi/jscex-jit.js"></script>
-<script type="text/javascript" src="renxi/jscex-builderbase.min.js"></script>
-<script type="text/javascript" src="renxi/jscex-async.min.js"></script>
-<script type="text/javascript" src="renxi/jscex-async-powerpack.min.js"></script>
-<script type="text/javascript" src="renxi/functions.js" charset="utf-8"></script>
-<script type="text/javascript" src="renxi/love.js" charset="utf-8"></script>
-<style type="text/css">
-<!--
-.STYLE1 {
-	color: #666666
+<meta charset="utf-8">
+<title>满月酒倒计时</title>
+
+<style>
+@import url("https://fonts.googleapis.com/css?family=Aleo");
+
+:root {
+  font-family: "Aleo", sans-serif;
 }
--->
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: rgb(119, 13, 13);
+  background: radial-gradient(
+    circle,
+    rgba(119, 13, 13, 0.92) 64%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+
+.label {
+  font-size: 2.2rem;
+  background: url("img/6368077651977322227241996.png");
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: moveBg 30s linear infinite;
+}
+
+@keyframes moveBg {
+  0% {
+    background-position: 0% 30%;
+  }
+  100% {
+    background-position: 1000% 500%;
+  }
+}
+
+.middle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  user-select: none;
+}
+
+.time {
+  color: #d99c3b;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+}
+
+.time span {
+  padding: 0 14px;
+  font-size: 0.8rem;
+}
+
+.time span div {
+  font-size: 3rem;
+}
+
+@media (max-width: 740px) {
+  .label {
+    font-size: 1.7rem;
+  }
+  .time span {
+    padding: 0 16px;
+    font-size: 0.6rem;
+  }
+  .time span div {
+    font-size: 2rem;
+  }
+}
 </style>
 </head>
 <body>
-<audio autoplay="autopaly">
-  <source src="renxi.mp3" type="audio/mp3" />
-</audio>
-<div id="main">
-  <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(Chrome)或者火狐(Firefox)浏览器，或者其他游览器的最新版本。by罗应生</div>
-  <div id="wrap">
-    <div id="text">
-      <div id="code"> <font color="#FF0000"> <span class="say">亲爱的罗丽姬姐姐，最近如何啊，自从有了罗蜜欧越理解你带着豪仔成长需要多大的勇气及力量</span><br>
-        <span class="say"> </span><br>
-        <span class="say"> 咱们已经好久没住一起啦，想念你，我的姬姐姐</span><br>
-        <span class="say"> </span><br>
-        <span class="say">你的爱都给豪仔了，我妒忌，羡慕</span><br>
-        <span class="say">永远都想念你啊，我的姬姐姐</span><br>
-        <span class="say">谢谢你，在我成长的时候陪伴，需要的时候支持，伤心的时候安慰</span><br>
-        <span class="say">独自承担无穷的压力，却没能压垮你的肩膀，反而越爬越高</span><br>
-        <span class="say"> </span><br>
-        <span class="say"><span class="space"></span> -- 姬姐姐么么哒，后世还要做你弟弟--</span> </font>
-        </p>
-      </div>
-    </div>
-    <div id="clock-box"> <span class="STYLE1"></span><font color="#33CC00">咱们在一起</font> <span class="STYLE1">已经是……</span>
-      <div id="clock"></div>
-    </div>
-    <canvas id="canvas" width="1100" height="680"></canvas>
-  </div>
+<div class="middle">
+	<h1 class="label">满月酒倒计时</h1>
+	<div class="time">
+		<span>
+		<div id="d">
+			00
+		</div>
+		Days </span> <span>
+		<div id="h">
+			00
+		</div>
+		Hours </span> <span>
+		<div id="m">
+			00
+		</div>
+		Minutes </span> <span>
+		<div id="s">
+			00
+		</div>
+		Seconds </span>
+	</div>
 </div>
+
 <script>
-    </script>
-<script>
-    (function(){
-        var canvas = $('#canvas');
-		
-        if (!canvas[0].getContext) {
-            $("#error").show();
-            return false;        }
+class Snowflake {
+  constructor() {
+    this.x = 0;
+    this.y = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.radius = 0;
+    this.alpha = 0;
 
-        var width = canvas.width();
-        var height = canvas.height();        
-        canvas.attr("width", width);
-        canvas.attr("height", height);
-        var opts = {
-            seed: {
-                x: width / 2 - 20,
-                color: "rgb(190, 26, 37)",
-                scale: 2
-            },
-            branch: [
-                [535, 680, 570, 250, 500, 200, 30, 100, [
-                    [540, 500, 455, 417, 340, 400, 13, 100, [
-                        [450, 435, 434, 430, 394, 395, 2, 40]
-                    ]],
-                    [550, 445, 600, 356, 680, 345, 12, 100, [
-                        [578, 400, 648, 409, 661, 426, 3, 80]
-                    ]],
-                    [539, 281, 537, 248, 534, 217, 3, 40],
-                    [546, 397, 413, 247, 328, 244, 9, 80, [
-                        [427, 286, 383, 253, 371, 205, 2, 40],
-                        [498, 345, 435, 315, 395, 330, 4, 60]
-                    ]],
-                    [546, 357, 608, 252, 678, 221, 6, 100, [
-                        [590, 293, 646, 277, 648, 271, 2, 80]
-                    ]]
-                ]] 
-            ],
-            bloom: {
-                num: 700,
-                width: 1080,
-                height: 650,
-            },
-            footer: {
-                width: 1200,
-                height: 5,
-                speed: 10,
-            }
-        }
+    this.reset();
+  }
 
-        var tree = new Tree(canvas[0], width, height, opts);
-        var seed = tree.seed;
-        var foot = tree.footer;
-        var hold = 1;
+  reset() {
+    this.x = this.randBetween(0, window.innerWidth);
+    this.y = this.randBetween(0, -window.innerHeight);
+    this.vx = this.randBetween(-3, 3);
+    this.vy = this.randBetween(2, 5);
+    this.radius = this.randBetween(1, 4);
+    this.alpha = this.randBetween(0.1, 0.9);
+  }
 
-        canvas.click(function(e) {
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            if (seed.hover(x, y)) {
-                hold = 0; 
-                canvas.unbind("click");
-                canvas.unbind("mousemove");
-                canvas.removeClass('hand');
-            }
-        }).mousemove(function(e){
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            canvas.toggleClass('hand', seed.hover(x, y));
-        });
+  randBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
 
-        var seedAnimate = eval(Jscex.compile("async", function () {
-            seed.draw();
-            while (hold) {
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canScale()) {
-                seed.scale(0.95);
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canMove()) {
-                seed.move(0, 2);
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-        }));
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
 
-        var growAnimate = eval(Jscex.compile("async", function () {
-            do {
-    	        tree.grow();
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canGrow());
-        }));
+    if (this.y + this.radius > window.innerHeight) {
+      this.reset();
+    }
+  }
+}
 
-        var flowAnimate = eval(Jscex.compile("async", function () {
-            do {
-    	        tree.flower(2);
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canFlower());
-        }));
+class Snow {
+  constructor() {
+    this.canvas = document.createElement("canvas");
+    this.ctx = this.canvas.getContext("2d");
 
-        var moveAnimate = eval(Jscex.compile("async", function () {
-            tree.snapshot("p1", 240, 0, 610, 680);
-            while (tree.move("p1", 500, 0)) {
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-            foot.draw();
-            tree.snapshot("p2", 500, 0, 610, 680);
+    document.body.appendChild(this.canvas);
 
-            // 会有闪烁不得意这样做, (＞﹏＜)
-            canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
-            canvas.css("background", "#ffe");
-            $await(Jscex.Async.sleep(300));
-            canvas.css("background", "none");
-        }));
+    window.addEventListener("resize", () => this.onResize());
+    this.onResize();
+    this.updateBound = this.update.bind(this);
+    requestAnimationFrame(this.updateBound);
 
-        var jumpAnimate = eval(Jscex.compile("async", function () {
-            var ctx = tree.ctx;
-            while (true) {
-                tree.ctx.clearRect(0, 0, width, height);
-                tree.jump();
-                foot.draw();
-                $await(Jscex.Async.sleep(25));
-            }
-        }));
+    this.createSnowflakes();
+  }
 
-        var textAnimate = eval(Jscex.compile("async", function () {
-		    var together = new Date();
-		    together.setFullYear(1991,6 , 9); 			//时间年月日
-		    together.setHours(0);						//小时	
-		    together.setMinutes(53);					//分钟
-		    together.setSeconds(0);					//秒前一位
-		    together.setMilliseconds(2);				//秒第二位
+  onResize() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+  }
 
-		    $("#code").show().typewriter();
-            $("#clock-box").fadeIn(500);
-            while (true) {
-                timeElapse(together);
-                $await(Jscex.Async.sleep(1000));
-            }
-        }));
+  createSnowflakes() {
+    const flakes = window.innerWidth / 4;
 
-        var runAsync = eval(Jscex.compile("async", function () {
-            $await(seedAnimate());
-            $await(growAnimate());
-            $await(flowAnimate());
-            $await(moveAnimate());
+    this.snowflakes = [];
 
-            textAnimate().start();
+    for (let s = 0; s < flakes; s++) {
+      this.snowflakes.push(new Snowflake());
+    }
+  }
 
-            $await(jumpAnimate());
-        }));
+  update() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
 
-        runAsync().start();
-    })();
-    </script>
+    for (let flake of this.snowflakes) {
+      flake.update();
 
+      this.ctx.save();
+      this.ctx.fillStyle = "#FFF";
+      this.ctx.beginPath();
+      this.ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+      this.ctx.closePath();
+      this.ctx.globalAlpha = flake.alpha;
+      this.ctx.fill();
+      this.ctx.restore();
+    }
+    requestAnimationFrame(this.updateBound);
+  }
+}
+
+new Snow();
+
+
+////////////////////////////////////////////////////////////
+
+// Simple CountDown Clock
+
+const comingdate = new Date("Apr 30, 2019 18:00:00");
+
+const d = document.getElementById("d");
+const h = document.getElementById("h");
+const m = document.getElementById("m");
+const s = document.getElementById("s");
+
+const countdown = setInterval(() => {
+  const now   = new Date();
+  const des   = comingdate.getTime() - now.getTime();
+  const days  = Math.floor(des / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((des % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins  = Math.floor((des % (1000 * 60 * 60)) / (1000 * 60));
+  const secs  = Math.floor((des % (1000 * 60)) / 1000);
+
+  d.innerHTML = getTrueNumber(days);
+  h.innerHTML = getTrueNumber(hours);
+  m.innerHTML = getTrueNumber(mins);
+  s.innerHTML = getTrueNumber(secs);
+
+  if (x <= 0) clearInterval(x);
+}, 1000);
+
+const getTrueNumber = x => (x < 10 ? "0" + x : x);
+</script>
 <div style="text-align:center;">
-<p>By：<a href="https://user.qzone.qq.com/719454560?ADUIN=719454560&ADSESSION=1553826642&ADTAG=CLIENT.QQ.5581_MyInfo_PersonalInfo.0&ADPUBNO=26825&source=namecardstar" title="谢谢你" target="_blank">谢谢你</a></p>
+<p>期待满月酒：<a href="https://eson1991.github.io/" target="_blank">摸摸你的脸</a></p>
 </div>
-
 </body>
 </html>
