@@ -242,3 +242,63 @@
   overflow:hidden;
   background-image:url('../../resources/images/transparent.gif');
 }
+#u14_img {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:496px;
+  height:66px;
+}
+#u14 {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:857px;
+  width:496px;
+  height:66px;
+}
+#u14_text {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:0px;
+  visibility:hidden;
+  word-wrap:break-word;
+}
+#u15_img {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:302px;
+  height:192px;
+}
+#u15 {
+  border-width:0px;
+  position:absolute;
+  left:127px;
+  top:186px;
+  width:302px;
+  height:192px;
+}
+#u15_text {
+  border-width:0px;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:0px;
+  visibility:hidden;
+  word-wrap:break-word;
+}
+#u16 {
+  border-width:0px;
+  position:absolute;
+  left:7px;
+  top:79px;
+  width:422px;
+  height:774px;
+  overflow:hidden;
+  background-image:url('../../resources/images/transparent.gif');
+}
